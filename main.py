@@ -14,22 +14,22 @@ WHITE = "\033[m"
 
 def validate(date_text: str):
     try:
-        a = datetime.strptime(date_text, '%d.%m.%Y')
+        a = datetime.strptime(date_text, '%d.%m.%Y').date()
         return a < today
     except:
         return False
 
 header = \
 """\
-+----+---------------+----------+-------------+------------+
-| id |      Name     |   Date   |  Days left  |  Next age  |"""
+┌────┰───────────────┰──────────┰─────────────┰────────────┐
+│ id │      Name     │   Date   │  Days left  │  Next age  │"""
 
 def check(): 
     print(header)
     sqlite_select_query = """SELECT * from bdays"""
     cursor.execute(sqlite_select_query)
     for i in cursor.fetchall():
-        print("|----|---------------|----------|-------------|------------|")
+        print("├────┼───────────────┼──────────┼─────────────┼────────────┤")
         bday = datetime.strptime(i[2], "%d.%m.%Y").date()
         next_age = today.year - bday.year
         this_year_bday_str = f"{i[2][0:6]}{today.year}"
@@ -46,8 +46,8 @@ def check():
         next_age = str(next_age)
         days_left = str(days_left)
         id = str(i[0]) if i[0] > 10 else "0"+str(i[0])
-        print(f"\r|{id.center(4)}|{i[1].center(15)}|{i[2]}|{days_left.center(13)}|{next_age.center(12)}|")
-    print("+----+---------------+----------+-------------+------------+")
+        print(f"\r│{id.center(4)}│{i[1].center(15)}│{i[2]}│{days_left.center(13)}│{next_age.center(12)}│")
+    print("└────┴───────────────┴──────────┴─────────────┴────────────┘")
 def add_new(name: str, birthdate: str):
     sqlite_insert_query = """INSERT INTO bdays 
                              (name, birthdate)
@@ -61,7 +61,7 @@ def add_new(name: str, birthdate: str):
         conn.commit()
         print(GREEN+"[+] Success!")
     else:
-        print(RED+"Incorrect data format, should be DD.MM.YYYY")
+        print(RED+"[+] Incorrect data format, should be DD.MM.YYYY")
 
 def remove(id: str):
     sqlite_remove_query = """DELETE FROM bdays WHERE id=?"""
